@@ -17,10 +17,32 @@ objPos::objPos(int xPos, int yPos, char sym)
 }
 
 // Respect the rule of six / minimum four
-// [TODO] Implement the missing special member functions to meet the minimum four rule
+// [TODO] Implement the missing special member functions to meet the minimum four rule -
+objPos::~objPos(){
+    delete pos;
+    pos = nullptr;
+    //add whatever we need to free from heap (if theres anything else)
+}
 
+objPos::objPos(const objPos &o){
+	// this is the deep copy
+	pos = new Pos;
+    pos->x = o.pos->x;
+    pos->y = o.pos->y;
+    symbol = o.symbol;
+}
 
-
+objPos& objPos::operator=(const objPos &o){
+	if (this != &o){
+		//deep copy as in copy constructor
+        if (pos != nullptr) delete this->pos;
+        pos = new Pos;
+        this->pos->x = o.pos->x;
+        this->pos->y = o.pos->y;
+        this->symbol = o.symbol;
+	}
+	return *this;
+}
 
 void objPos::setObjPos(objPos o)
 {
