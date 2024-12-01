@@ -1,6 +1,7 @@
 #include <iostream>
 #include "MacUILib.h"
 #include "objPos.h"
+#include "objPosArrayList.h"
 #include "Player.h"
 #include "GameMechs.h"
 #include "Food.h"
@@ -46,8 +47,8 @@ void Initialize(void)
     MacUILib_clearScreen();
 
     myGM = new GameMechs();
-    myPlayer = new Player(myGM);
     myFood = new Food();
+    myPlayer = new Player(myGM, myFood);
 
     myFood -> generateFood(myPlayer->getPlayerPos());
 }
@@ -77,37 +78,56 @@ void DrawScreen(void)
     MacUILib_clearScreen();    
 
     // implement copy assignment operator to work
-    objPos playerPos = myPlayer -> getPlayerPos();
+    objPosArrayList* playerPos = myPlayer -> getPlayerPos();
+    int playerSize = playerPos->getSize();
+    bool isPlayer;
+
     objPos foodPos = myFood -> getFoodPos();
 
     int boardX = myGM -> getBoardSizeX();
     int boardY = myGM -> getBoardSizeY();
+
+
+    for (int i = 0; i < boardY; i++){
+        for (int j = 0; j < boardX; j++){
+            // assume element j i is not the player every loop
+            isPlayer = false;
+
+            for (int k = 0; k < playerSize; k++){
+                objPos thisSeg = playerPos->getElement(k);
+
+                // compare positions of element ji to seg j of playerArrayList
+                if (objPos(j,i,' ').isPosEqual(&thisSeg)){
+                    MacUILib_printf("%c", myPlayer->getPlayerSymbol());
+                    // element j i is the player, skip the rest of conditionals after this loop
+                    isPlayer = true;
+                }
+            }
+
+            // if the player is not element ji perform remaining conditionals 
+            if (!isPlayer){
+                if (i == 0 || i == (boardY - 1) || j == 0 || j == (boardX - 1)){
+                MacUILib_printf("#");
+                }
+                else if ((j == foodPos.pos -> x) && (i == foodPos.pos -> y)){
+                    MacUILib_printf("%c", foodPos.symbol);
+                }
+                else {
+                    MacUILib_printf("%c", ' ');
+                }
+            }
+        }
+        MacUILib_printf("\n");
+    }
+
+    MacUILib_printf("Score: %d\n", myGM->getScore());
+    MacUILib_printf("space key to quit\n");
 
     // MacUILib_printf("Player[x, y] = [%d, %d], %c\n",
     //                 playerPos.pos->x, playerPos.pos->y, playerPos.getSymbol());
 
     MacUILib_printf("Food[x,y] = [%d,%d], %c\n",
                     foodPos.pos->x, foodPos.pos->y, foodPos.symbol);
-
-
-    for (int i = 0; i < boardY; i++){
-        for (int j = 0; j < boardX; j++){
-            if (i == 0 || i == (boardY - 1) || j == 0 || j == (boardX - 1)){
-                MacUILib_printf("#");
-            }
-            else if ((i == playerPos.pos -> y) && (j == playerPos.pos -> x)){
-                MacUILib_printf("%c", playerPos.symbol);
-            }
-            else if ((j == foodPos.pos -> x) && (i == foodPos.pos -> y)){
-                MacUILib_printf("%c", foodPos.symbol);
-            }
-            else {
-
-                MacUILib_printf("%c", ' ');
-            }
-        }
-        MacUILib_printf("\n");
-    }
 }    
 
 void LoopDelay(void)

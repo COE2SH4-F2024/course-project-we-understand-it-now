@@ -1,6 +1,5 @@
 #include "GameMechs.h"
 #include "MacUILib.h"
-#include "Food.h"
 
 GameMechs::GameMechs()
 {

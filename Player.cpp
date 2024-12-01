@@ -1,30 +1,47 @@
 #include "Player.h"
 
 
-Player::Player(GameMechs* thisGMRef)
+Player::Player(GameMechs* thisGMRef, Food* thisFoodRef)
 {
     mainGameMechsRef = thisGMRef;
+    mainGameFoodRef = thisFoodRef;
     myDir = STOP;
     myPrevDir = STOP;
+    symbol = '*';
+    // instantiate objPosArrayList on heap
+    playerPosList = new objPosArrayList();
+
+    // set player initial conditions, start in middle of board
+    objPos headPos(mainGameMechsRef->getBoardSizeX() / 2, mainGameMechsRef->getBoardSizeY() / 2, symbol);
+    playerPosList->insertHead(headPos);
 
 
-    // set player initial conditions
-    playerPos.pos->x = mainGameMechsRef->getBoardSizeX() / 2;
-    playerPos.pos->y = mainGameMechsRef->getBoardSizeY() / 2;
-    playerPos.symbol = '*';
+    // listHead.pos->x = mainGameMechsRef->getBoardSizeX() / 2;
+    // listHead.pos->y = mainGameMechsRef->getBoardSizeY() / 2;
+    // listHead.symbol = '*';
 }
 
 
 Player::~Player()
 { 
     // delete any heap members here
-    // no heap members :p -- can leave destructor alone for now
+    delete playerPosList;
+    playerPosList = nullptr;
 }
 
-objPos Player::getPlayerPos() const
+// ease of access addition
+char Player::getPlayerSymbol(){
+    return symbol;
+}
+
+objPosArrayList* Player::getPlayerPos() const
 {
-    // return the reference to the playerPos arrray list
-    return playerPos;
+    // return the reference to the listHead array list
+    return playerPosList;
+}
+
+void Player::increasePlayerLength(){
+    mainGameMechsRef->incrementScore();
 }
 
 void Player::updatePlayerDir()
@@ -78,40 +95,61 @@ void Player::movePlayer()
     // get w and h for wraparound
     int boardW = mainGameMechsRef->getBoardSizeX();
     int boardH = mainGameMechsRef->getBoardSizeY();
+
+    
     if (myDir != STOP){
+        // temp objPos to use when moving
+        objPos listHead = playerPosList->getHeadElement();
+
         switch (myDir){
             case LEFT: 
-                playerPos.pos->x--;
+                listHead.pos->x--;
                 // wraps around
-                if(playerPos.pos->x <= 0){
+                if(listHead.pos->x <= 0){
                     // boardW-1 is #, boardW-2 is other side of board
-                    playerPos.pos->x = boardW - 2; 
+                    listHead.pos->x = boardW - 2; 
                 }
                 break;
 
             case RIGHT: 
-                playerPos.pos->x++;
+                listHead.pos->x++;
                 // wraps around
-                if(playerPos.pos->x >= (boardW - 1)){
-                    playerPos.pos->x = 1;
+                if(listHead.pos->x >= (boardW - 1)){
+                    listHead.pos->x = 1;
                 }
                 break;
 
             case UP: 
-                playerPos.pos->y--;
+                listHead.pos->y--;
                 // wraps around
-                if(playerPos.pos->y <= 0){
-                    playerPos.pos->y = boardH - 2;
+                if(listHead.pos->y <= 0){
+                    listHead.pos->y = boardH - 2;
                 }
                 break;
 
             case DOWN: //down
-                playerPos.pos->y++;
+                listHead.pos->y++;
                 // wraps around
-                if(playerPos.pos->y >= (boardH - 1)){
-                    playerPos.pos->y = 1;
+                if(listHead.pos->y >= (boardH - 1)){
+                    listHead.pos->y = 1;
                 }
                 break;
+        }
+
+        // moves player forward
+        playerPosList->insertHead(listHead);
+
+        // checks if head will overlap food
+        objPos foodPos = mainGameFoodRef->getFoodPos();
+        // if head catches food don't remove tail to make 
+        // length increase by 1 (since food eaten)
+        if (listHead.isPosEqual(&foodPos)){
+            increasePlayerLength();
+            //change foodpos location after being eaten
+            mainGameFoodRef->generateFood(playerPosList);
+        } else {
+            // removes tail to maintain length while moving
+            playerPosList->removeTail();
         }
     }
 }

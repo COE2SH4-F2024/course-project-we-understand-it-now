@@ -77,6 +77,9 @@ void objPosArrayList::removeTail()
     listSize--; 
 }
 
+// ! Out of bounds/empty cases return objPos (0,0,'_') below due to necessary return (non void)
+// ? Despite this, they should never be called in the final version of the game
+
 objPos objPosArrayList::getHeadElement() const
 {
     if(listSize == 0)
