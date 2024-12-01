@@ -3,6 +3,7 @@
 #include "objPos.h"
 #include "Player.h"
 #include "GameMechs.h"
+#include "Food.h"
 
 using namespace std;
 
@@ -10,6 +11,7 @@ using namespace std;
 
 Player *myPlayer;
 GameMechs *myGM;
+Food *myFood;
 
 void Initialize(void);
 void GetInput(void);
@@ -22,7 +24,7 @@ void CleanUp(void);
 
 int main(void)
 {
-
+    srand(time(NULL));
     Initialize();
 
     while(myGM->getExitFlagStatus() == false)  
@@ -45,11 +47,21 @@ void Initialize(void)
 
     myGM = new GameMechs();
     myPlayer = new Player(myGM);
+    myFood = new Food();
+
+    myFood -> generateFood(myPlayer->getPlayerPos());
 }
 
 void GetInput(void)
 {
-   
+   myGM -> collectAsyncInput();
+
+   // Debug-Use Key:
+   char input = myGM -> getInput();
+   if (input == 'p'){
+        myFood;
+        myFood -> generateFood(myPlayer->getPlayerPos());
+   }
 }
 
 void RunLogic(void)
@@ -65,21 +77,33 @@ void DrawScreen(void)
     MacUILib_clearScreen();    
 
     // implement copy assignment operator to work
-    objPos playerPos = myPlayer->getPlayerPos();
+    objPos playerPos = myPlayer -> getPlayerPos();
+    objPos foodPos = myFood -> getFoodPos();
+
+    int boardX = myGM -> getBoardSizeX();
+    int boardY = myGM -> getBoardSizeY();
 
     // MacUILib_printf("Player[x, y] = [%d, %d], %c\n",
     //                 playerPos.pos->x, playerPos.pos->y, playerPos.getSymbol());
 
-    for (int i = 0; i < myGM->getBoardSizeY(); i++){
-        for (int j = 0; j < myGM->getBoardSizeX(); j++){
-            if (i == 0 || i == (myGM->getBoardSizeY() - 1) || j == 0 || j == (myGM->getBoardSizeX() - 1)){
+    MacUILib_printf("Food[x,y] = [%d,%d], %c\n",
+                    foodPos.pos->x, foodPos.pos->y, foodPos.symbol);
+
+
+    for (int i = 0; i < boardY; i++){
+        for (int j = 0; j < boardX; j++){
+            if (i == 0 || i == (boardY - 1) || j == 0 || j == (boardX - 1)){
                 MacUILib_printf("#");
             }
-            else if ((i == playerPos.pos->y) && (j == playerPos.pos->x)){
+            else if ((i == playerPos.pos -> y) && (j == playerPos.pos -> x)){
                 MacUILib_printf("%c", playerPos.symbol);
             }
+            else if ((j == foodPos.pos -> x) && (i == foodPos.pos -> y)){
+                MacUILib_printf("%c", foodPos.symbol);
+            }
             else {
-                MacUILib_printf(" ");
+
+                MacUILib_printf("%c", ' ');
             }
         }
         MacUILib_printf("\n");
@@ -98,6 +122,7 @@ void CleanUp(void)
 
     delete myPlayer;
     delete myGM;
+    delete myFood;
 
     MacUILib_uninit();
 }

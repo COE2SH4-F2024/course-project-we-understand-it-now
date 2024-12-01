@@ -1,5 +1,6 @@
 #include "GameMechs.h"
 #include "MacUILib.h"
+#include "Food.h"
 
 GameMechs::GameMechs()
 {
@@ -40,14 +41,18 @@ bool GameMechs::getLoseFlagStatus() const
     return loseFlag;
 }
     
-
-char GameMechs::getInput() 
+void GameMechs::collectAsyncInput()
 {
     if(MacUILib_hasChar()){
         input = MacUILib_getChar();
     }
 
-    return input;
+    if (input == ' ') exitFlag = true;
+}
+
+char GameMechs::getInput() 
+{
+    return input; 
 }
 
 int GameMechs::getScore() const
