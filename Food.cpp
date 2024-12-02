@@ -13,11 +13,12 @@ Food::~Food(){
 
 void Food::generateFood(objPosArrayList* blockOff){
     bool isValid;
-    GameMechs genFoodGM; // Need an instance of a GameMechs for generateFood purposes
+    GameMechs genFoodGM; // Need an instance of a GameMechs for boardsize purposes
 
     do {
         isValid = true;
-        int randX = 1 + rand() % (genFoodGM.getBoardSizeX() - 2); // Ensures food stays in-bounds
+        // Ensures food stays in-bounds (from 1 to size - 2 due to border)
+        int randX = 1 + rand() % (genFoodGM.getBoardSizeX() - 2); 
         int randY = 1 + rand() % (genFoodGM.getBoardSizeY() - 2);
         foodPos.setObjPos(randX, randY, 'o');
 
@@ -28,6 +29,7 @@ void Food::generateFood(objPosArrayList* blockOff){
             }
         }
         
+        // continues looping while player positions occupy the new food position
     } while (!isValid); 
 }
 

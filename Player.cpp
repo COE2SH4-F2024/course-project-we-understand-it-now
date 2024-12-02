@@ -6,7 +6,6 @@ Player::Player(GameMechs* thisGMRef, Food* thisFoodRef)
     mainGameMechsRef = thisGMRef;
     mainGameFoodRef = thisFoodRef;
     myDir = STOP;
-    myPrevDir = STOP;
     symbol = '*';
     // instantiate objPosArrayList on heap
     playerPosList = new objPosArrayList();
@@ -15,10 +14,6 @@ Player::Player(GameMechs* thisGMRef, Food* thisFoodRef)
     objPos headPos(mainGameMechsRef->getBoardSizeX() / 2, mainGameMechsRef->getBoardSizeY() / 2, symbol);
     playerPosList->insertHead(headPos);
 
-
-    // listHead.pos->x = mainGameMechsRef->getBoardSizeX() / 2;
-    // listHead.pos->y = mainGameMechsRef->getBoardSizeY() / 2;
-    // listHead.symbol = '*';
 }
 
 
@@ -60,27 +55,23 @@ void Player::updatePlayerDir()
             //           0     1    2      3      4
             //    myDir {UP, DOWN, LEFT, RIGHT, STOP};  -- This is the direction state
             case 'w': 
-                if (myPrevDir != UP & myPrevDir != DOWN){ // If the direction wasn't vertical, then you can go up
+                if (myDir != UP & myDir != DOWN){ // If the direction wasn't vertical, then you can go up
                     myDir = UP;
-                    myPrevDir = myDir;
                 }
                 break;
             case 'a': 
-                if (myPrevDir != LEFT && myPrevDir != RIGHT){ // If the direction wasn't horizontal, then you can go left
+                if (myDir != LEFT && myDir != RIGHT){ // If the direction wasn't horizontal, then you can go left
                     myDir = LEFT;
-                    myPrevDir = myDir;
                 }                
                 break;
             case 's': 
-                if (myPrevDir != UP & myPrevDir != DOWN){ // If the direction wasn't vertical, then you can go down
+                if (myDir != UP & myDir != DOWN){ // If the direction wasn't vertical, then you can go down
                     myDir = DOWN;
-                    myPrevDir = myDir;
                 }                
                 break;
             case 'd': 
-                if (myPrevDir != LEFT && myPrevDir != RIGHT){ // If the direction wasn't horizontal, then you can go right
+                if (myDir != LEFT && myDir != RIGHT){ // If the direction wasn't horizontal, then you can go right
                     myDir = RIGHT;
-                    myPrevDir = myDir;
                 }                
                 break;
 
@@ -140,33 +131,41 @@ void Player::movePlayer()
                 break;
         }
 
+        // loops through playerPosList
         for (int h = 0; h < playerPosList->getSize(); h++) {
+            // gets element h to compare to in this iteration
+            objPos listComp = playerPosList->getElement(h);
 
-            // Check if the position of the listHead aligns with any of the list elements
-            if (((listHead.pos->x) == (playerPosList->getElement(h).pos->x))
-                 && ((listHead.pos->y) == (playerPosList->getElement(h).pos->y))) {
+            // Check if the position of the listHead aligns with list elements
+            if (listHead.isPosEqual(&listComp)){
                 
                 // If so, activate exit and lose flag
                 mainGameMechsRef -> setExitTrue();
                 mainGameMechsRef -> setLoseFlag();
-
+                
             }
         }
+        
+        // only move the characters if exit flag or lose flag aren't triggered above 
+        // (prevents display misorientation)
+        if (!mainGameMechsRef->getExitFlagStatus() || !mainGameMechsRef->getLoseFlagStatus()){
+            // moves player forward
+            playerPosList->insertHead(listHead);
 
-        // moves player forward
-        playerPosList->insertHead(listHead);
+            // checks if head will overlap food
+            objPos foodPos = mainGameFoodRef->getFoodPos();
 
-        // checks if head will overlap food
-        objPos foodPos = mainGameFoodRef->getFoodPos();
-        // if head catches food don't remove tail to make 
-        // length increase by 1 (since food eaten)
-        if (listHead.isPosEqual(&foodPos)){
-            increasePlayerLength();
-            //change foodpos location after being eaten
-            mainGameFoodRef->generateFood(playerPosList);
-        } else {
-            // removes tail to maintain length while moving
-            playerPosList->removeTail();
+            // if head catches food don't remove tail to make 
+            // length increase by 1 (since food eaten)
+            if (listHead.isPosEqual(&foodPos)){
+                increasePlayerLength();
+                
+                //change foodpos location after being eaten
+                mainGameFoodRef->generateFood(playerPosList);
+            } else {
+                // removes tail to maintain length while moving
+                playerPosList->removeTail();
+            }
         }
     }
 }

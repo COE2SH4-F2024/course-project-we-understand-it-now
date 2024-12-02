@@ -34,7 +34,6 @@ class Player
         //// objPos playerPos; // Upgrade this in iteration 3.
         objPosArrayList* playerPosList;       
         enum Dir myDir;
-        enum Dir myPrevDir;
         char symbol;
 
         // Need a reference to the Main Game Mechanisms
