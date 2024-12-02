@@ -15,11 +15,9 @@ void Food::generateFood(objPosArrayList* blockOff){
     bool isValid;
     GameMechs genFoodGM; // Need an instance of a GameMechs for generateFood purposes
 
-    // Current issue, but unspecified by iterative workflow is that food can spawn
-    // in borders and on character
     do {
         isValid = true;
-        int randX = 1 + rand() % (genFoodGM.getBoardSizeX() - 2);
+        int randX = 1 + rand() % (genFoodGM.getBoardSizeX() - 2); // Ensures food stays in-bounds
         int randY = 1 + rand() % (genFoodGM.getBoardSizeY() - 2);
         foodPos.setObjPos(randX, randY, 'o');
 
@@ -35,4 +33,4 @@ void Food::generateFood(objPosArrayList* blockOff){
 
 objPos Food::getFoodPos() const{
     return foodPos;
-}
+} 

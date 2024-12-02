@@ -44,6 +44,10 @@ void Player::increasePlayerLength(){
     mainGameMechsRef->incrementScore();
 }
 
+bool Player::checkSelfCollision(){
+
+}
+
 void Player::updatePlayerDir()
 {
     // PPA3 input processing logic  
@@ -127,13 +131,26 @@ void Player::movePlayer()
                 }
                 break;
 
-            case DOWN: //down
+            case DOWN: 
                 listHead.pos->y++;
                 // wraps around
                 if(listHead.pos->y >= (boardH - 1)){
                     listHead.pos->y = 1;
                 }
                 break;
+        }
+
+        for (int h = 0; h < playerPosList->getSize(); h++) {
+
+            // Check if the position of the listHead aligns with any of the list elements
+            if (((listHead.pos->x) == (playerPosList->getElement(h).pos->x))
+                 && ((listHead.pos->y) == (playerPosList->getElement(h).pos->y))) {
+                
+                // If so, activate exit and lose flag
+                mainGameMechsRef -> setExitTrue();
+                mainGameMechsRef -> setLoseFlag();
+
+            }
         }
 
         // moves player forward

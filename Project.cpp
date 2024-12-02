@@ -83,7 +83,6 @@ void DrawScreen(void)
     bool isPlayer;
 
     objPos foodPos = myFood -> getFoodPos();
-
     int boardX = myGM -> getBoardSizeX();
     int boardY = myGM -> getBoardSizeY();
 
@@ -121,13 +120,21 @@ void DrawScreen(void)
     }
 
     MacUILib_printf("Score: %d\n", myGM->getScore());
-    MacUILib_printf("space key to quit\n");
+    MacUILib_printf("Press SPACE To Quit.\n");
 
     // MacUILib_printf("Player[x, y] = [%d, %d], %c\n",
     //                 playerPos.pos->x, playerPos.pos->y, playerPos.getSymbol());
 
     MacUILib_printf("Food[x,y] = [%d,%d], %c\n",
                     foodPos.pos->x, foodPos.pos->y, foodPos.symbol);
+
+
+    if (myGM -> getLoseFlagStatus() == true){
+        MacUILib_printf("You Have Lost The Game\n");
+    } else if (myGM -> getExitFlagStatus() == true){
+        MacUILib_printf("Game Exited by Player\n");
+    }
+
 }    
 
 void LoopDelay(void)
@@ -138,7 +145,7 @@ void LoopDelay(void)
 
 void CleanUp(void)
 {
-    MacUILib_clearScreen();    
+    // MacUILib_clearScreen();    
 
     delete myPlayer;
     delete myGM;
