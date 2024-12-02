@@ -40,7 +40,35 @@ void Player::increasePlayerLength(){
 }
 
 bool Player::checkSelfCollision(){
+    objPos listHead = playerPosList->getHeadElement();
 
+    // loops through playerPosList (after its head)
+    for (int h = 1; h < playerPosList->getSize(); h++) {
+        // gets element h to compare to in this iteration
+        objPos listComp = playerPosList->getElement(h);
+
+        // Check if the position of the listHead aligns with list elements
+        if (listHead.isPosEqual(&listComp)){
+            return true;
+        }
+    }
+
+    // no collision detected above
+    return false;
+}
+
+bool Player::checkFoodConsumption(){
+    objPos foodPos = mainGameFoodRef->getFoodPos();
+    // new position after snake movement 
+    objPos listHead = playerPosList->getHeadElement();
+
+    // if the new movement made the snake collide with the head
+    if (listHead.isPosEqual(&foodPos)){
+        return true;
+    // no food collision
+    } else{
+        return false;
+    }
 }
 
 void Player::updatePlayerDir()
@@ -87,13 +115,13 @@ void Player::movePlayer()
 {
     // PPA3 Finite State Machine logic
 
-    // get w and h for wraparound
+    // get width and height for wraparound
     int boardW = mainGameMechsRef->getBoardSizeX();
     int boardH = mainGameMechsRef->getBoardSizeY();
 
     
     if (myDir != STOP){
-        // temp objPos to use when moving
+        // temp current head position to use when updating movement
         objPos listHead = playerPosList->getHeadElement();
 
         switch (myDir){
@@ -131,41 +159,31 @@ void Player::movePlayer()
                 break;
         }
 
-        // loops through playerPosList
-        for (int h = 0; h < playerPosList->getSize(); h++) {
-            // gets element h to compare to in this iteration
-            objPos listComp = playerPosList->getElement(h);
+        // moves player based on above movement direction
+        playerPosList->insertHead(listHead);
 
-            // Check if the position of the listHead aligns with list elements
-            if (listHead.isPosEqual(&listComp)){
-                
-                // If so, activate exit and lose flag
-                mainGameMechsRef -> setExitTrue();
-                mainGameMechsRef -> setLoseFlag();
-                
-            }
+        // Check if the position of the listHead collides with snake body
+        if (checkSelfCollision()){
+            // If so, activate exit and lose flag
+            mainGameMechsRef -> setExitTrue();
+            mainGameMechsRef -> setLoseFlag();
+
+            // undoes head move on collision
+            playerPosList->removeHead();
+            // don't continue to food collision since self collision detected
+            return;
         }
-        
-        // only move the characters if exit flag or lose flag aren't triggered above 
-        // (prevents display misorientation)
-        if (!mainGameMechsRef->getExitFlagStatus() || !mainGameMechsRef->getLoseFlagStatus()){
-            // moves player forward
-            playerPosList->insertHead(listHead);
 
-            // checks if head will overlap food
-            objPos foodPos = mainGameFoodRef->getFoodPos();
-
-            // if head catches food don't remove tail to make 
-            // length increase by 1 (since food eaten)
-            if (listHead.isPosEqual(&foodPos)){
-                increasePlayerLength();
-                
-                //change foodpos location after being eaten
-                mainGameFoodRef->generateFood(playerPosList);
-            } else {
-                // removes tail to maintain length while moving
-                playerPosList->removeTail();
-            }
+        // if head catches food don't remove tail to make 
+        // length increase by 1 (since food eaten)
+        if (checkFoodConsumption()){
+            increasePlayerLength();
+            
+            //change foodpos location after being eaten
+            mainGameFoodRef->generateFood(playerPosList);
+        } else {
+            // removes tail to maintain length while moving
+            playerPosList->removeTail();
         }
     }
 }

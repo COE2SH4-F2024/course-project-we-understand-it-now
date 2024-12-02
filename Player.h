@@ -29,6 +29,7 @@ class Player
         char getPlayerSymbol();
         void increasePlayerLength();    
         bool checkSelfCollision();
+        bool checkFoodConsumption();
 
     private:
         //// objPos playerPos; // Upgrade this in iteration 3.
