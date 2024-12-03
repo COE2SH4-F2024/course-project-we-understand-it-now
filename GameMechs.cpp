@@ -9,8 +9,7 @@ GameMechs::GameMechs()
     score = 0;
 
     boardSizeX = 30;
-    boardSizeY = 15;
-    
+    boardSizeY = 15;   
 }
 
 GameMechs::GameMechs(int boardX, int boardY)
@@ -24,10 +23,9 @@ GameMechs::GameMechs(int boardX, int boardY)
     boardSizeY = boardY;
 }
 
-// do you need a destructor?
 GameMechs::~GameMechs()
 {
-    // not yet
+    // We do not need a destructor
 }
 
 bool GameMechs::getExitFlagStatus() const
@@ -46,7 +44,7 @@ void GameMechs::collectAsyncInput()
         input = MacUILib_getChar();
     }
 
-    if (input == ' ') exitFlag = true;
+    if (input == ' ') exitFlag = true; // Making our exit character as SPACE
 }
 
 char GameMechs::getInput() 
@@ -95,5 +93,3 @@ void GameMechs::clearInput()
 {
     input = '\0';
 }
-
-// More methods should be added here

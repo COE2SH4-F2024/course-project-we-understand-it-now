@@ -7,7 +7,7 @@
 
 objPosArrayList::objPosArrayList()
 {
-    int defaultSize = 200; // can change here easily if necessary
+    int defaultSize = 200; // Can change here easily if necessary
     aList = new objPos[defaultSize];
     listSize = 0;
     arrayCapacity = defaultSize;
@@ -32,34 +32,34 @@ void objPosArrayList::insertHead(objPos thisPos)
         return;
     }
 
-    // shift all list elements towards the tail
+    // Shift all list elements towards the tail
     for(int i = listSize; i > 0; i--)   
         aList[i] = aList[i - 1];  
 
     aList[0] = thisPos; // 'head' is the 1st element
-    listSize++; // list size increased
+    listSize++; // List size increased
 }
 
 void objPosArrayList::insertTail(objPos thisPos)
 {
     if(listSize == arrayCapacity)
     {
-        // //cout << "WARNING: full list." << endl;
+        // cout << "WARNING: full list." << endl;
         return;
     }
 
-    aList[listSize++] = thisPos; //increments listSize after setting current element to thisPos
+    aList[listSize++] = thisPos; // Increments listSize after setting current element to thisPos
 }
 
 void objPosArrayList::removeHead()
 {
     if(listSize == 0)
     {
-        // //cout << "WARNING: empty list" << endl;
+        // cout << "WARNING: empty list" << endl;
         return;
     }
 
-    // shift all elements towards the head
+    // Shift all elements towards the head
     for(int i = 0; i < listSize - 1; i++)   
         aList[i] = aList[i + 1];  
 
@@ -70,7 +70,7 @@ void objPosArrayList::removeTail()
 {
     if(listSize == 0)
     {
-        // //cout << "WARNING: empty list" << endl;
+        // cout << "WARNING: empty list" << endl;
         return;
     }
 
@@ -84,12 +84,12 @@ objPos objPosArrayList::getHeadElement() const
 {
     if(listSize == 0)
     {
-        // //cout << "WARNING: empty list" << endl;
+        // cout << "WARNING: empty list" << endl;
         objPos emptyObjPos = objPos(0,0,'_');
         return emptyObjPos;
     }
     
-    //1st element in list is head
+    // 1st element in list is the head
     return aList[0];
 }
 
@@ -97,12 +97,12 @@ objPos objPosArrayList::getTailElement() const
 {
     if(listSize == 0)
     {
-        // //cout << "WARNING: empty list" << endl;
+        // cout << "WARNING: empty list" << endl;
         objPos emptyObjPos = objPos(0,0,'_');
         return emptyObjPos;
     }
     
-    //last element in list is tail
+    // Last element in list is the tail
     return aList[listSize - 1];
 }
 
@@ -110,11 +110,11 @@ objPos objPosArrayList::getElement(int index) const
 {
     if(listSize == 0 || index < 0 || index >= listSize)
     {
-        // //cout << "WARNING: out of bounds" << endl;
+        // cout << "WARNING: out of bounds" << endl;
         objPos emptyObjPos = objPos(0,0,'_');
         return emptyObjPos;
     }
 
-    // gets index'th element in list
+    // Gets index'th element in list
     return aList[index];
 }

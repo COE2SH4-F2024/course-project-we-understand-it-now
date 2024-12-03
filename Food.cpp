@@ -22,14 +22,14 @@ void Food::generateFood(objPosArrayList* blockOff){
         int randY = 1 + rand() % (genFoodGM.getBoardSizeY() - 2);
         foodPos.setObjPos(randX, randY, 'o');
 
-        // loops through all of player positions, making sure none match new food
+        // Loops through all of player positions, making sure none match new food
         for (int i = 0; i < blockOff->getSize(); i++){
             if (blockOff->getElement(i).isPosEqual(&foodPos)){
                 isValid = false;
             }
         }
         
-        // continues looping while player positions occupy the new food position
+        // Continues looping while player positions occupy the new food position
     } while (!isValid); 
 }
 

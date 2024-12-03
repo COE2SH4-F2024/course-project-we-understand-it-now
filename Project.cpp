@@ -25,7 +25,7 @@ void CleanUp(void);
 
 int main(void)
 {
-    srand(time(NULL));
+    srand(time(NULL)); // Creating a new seed for the rand() function upon every frame
     Initialize();
 
     while(myGM->getExitFlagStatus() == false)  
@@ -58,11 +58,11 @@ void GetInput(void)
    myGM -> collectAsyncInput();
 
    // Debug-Use Key:
-   char input = myGM -> getInput();
-   if (input == 'p'){
-        myFood;
-        myFood -> generateFood(myPlayer->getPlayerPos());
-   }
+//    char input = myGM -> getInput();
+//    if (input == 'p'){
+//         myFood;
+//         myFood -> generateFood(myPlayer->getPlayerPos());
+//    }
 }
 
 void RunLogic(void)
@@ -77,7 +77,7 @@ void DrawScreen(void)
 {
     MacUILib_clearScreen();    
 
-    // implement copy assignment operator to work
+    // Implement copy assignment operator to work
     objPosArrayList* playerPos = myPlayer -> getPlayerPos();
     int playerSize = playerPos->getSize();
     bool isPlayer;
@@ -89,21 +89,21 @@ void DrawScreen(void)
 
     for (int i = 0; i < boardY; i++){
         for (int j = 0; j < boardX; j++){
-            // assume element j i is not the player every loop
+            // Assume element j i is not the player every loop
             isPlayer = false;
 
             for (int k = 0; k < playerSize; k++){
                 objPos thisSeg = playerPos->getElement(k);
 
-                // compare positions of element ji to seg j of playerArrayList
+                // Compare positions of element ji to seg j of playerArrayList
                 if (objPos(j,i,' ').isPosEqual(&thisSeg)){
                     MacUILib_printf("%c", myPlayer->getPlayerSymbol());
-                    // element j i is the player, skip the rest of conditionals after this loop
+                    // Element j i is the player, skip the rest of conditionals after this loop
                     isPlayer = true;
                 }
             }
 
-            // if the player is not element ji perform remaining conditionals 
+            // If the player is not element ji perform remaining conditionals 
             if (!isPlayer){
                 if (i == 0 || i == (boardY - 1) || j == 0 || j == (boardX - 1)){
                 MacUILib_printf("#");
@@ -121,14 +121,10 @@ void DrawScreen(void)
 
     MacUILib_printf("Score: %d\n", myGM->getScore());
     MacUILib_printf("Press SPACE To Quit.\n");
-
-    // MacUILib_printf("Player[x, y] = [%d, %d], %c\n",
-    //                 playerPos.pos->x, playerPos.pos->y, playerPos.getSymbol());
-
     MacUILib_printf("Food[x,y] = [%d,%d], %c\n",
                     foodPos.pos->x, foodPos.pos->y, foodPos.symbol);
 
-
+    // Establish different game-ending messages based on forced exit or losing exit
     if (myGM -> getLoseFlagStatus() == true){
         MacUILib_printf("You Have Lost The Game\n");
     } else if (myGM -> getExitFlagStatus() == true){
@@ -147,6 +143,7 @@ void CleanUp(void)
 {
     // MacUILib_clearScreen();    
 
+    // Free heap members
     delete myPlayer;
     delete myGM;
     delete myFood;
